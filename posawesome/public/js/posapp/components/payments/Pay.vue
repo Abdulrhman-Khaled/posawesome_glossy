@@ -134,7 +134,8 @@
         </v-card>
       </v-col>
       <v-col md="4" cols="12" class="pb-3">
-        <v-card class="invoices mx-auto grey lighten-5 mt-3 p-3" style="max-height: 94vh; height: 94vh">
+        <v-card class="invoices mx-auto grey lighten-5 mt-3 p-3 pb-16 overflow-y-auto"
+          style="max-height: 94vh; height: 94vh">
           <strong>
             <h4 class="primary--text">Totals</h4>
             <v-row>
@@ -192,12 +193,12 @@
             </v-row>
 
             <v-divider class="mt-4 mb-2"></v-divider>
-            <h4 class="primary--text">Event Details</h4>
+            <h4 class="primary--text">Event Details:</h4>
 
             <v-row>
               <v-col cols="12">
                 <v-textarea label="Subject" auto-grow outlined dense v-model="event_subject"
-                  :rules="[v => !!v || 'Subject is required']" background-color="white"></v-textarea>
+                  :rules="[v => !!v || 'Subject is required']" background-color="white" class="mb-0"></v-textarea>
               </v-col>
             </v-row>
 
@@ -211,7 +212,7 @@
                   <v-card>
                     <v-date-picker v-model="event_start_date" no-title scrollable>
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="$refs.startDialogTime.open()">Next</v-btn>
+                      <v-btn text color="primary" @click="start_time_dialog = true">Next</v-btn>
                     </v-date-picker>
                   </v-card>
                 </v-dialog>
@@ -233,7 +234,7 @@
                   <v-card>
                     <v-date-picker v-model="event_end_date" no-title scrollable>
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="$refs.endDialogTime.open()">Next</v-btn>
+                      <v-btn text color="primary" @click="end_time_dialog = true">Next</v-btn>
                     </v-date-picker>
                   </v-card>
                 </v-dialog>
@@ -594,32 +595,23 @@ export default {
       });
     },
     clear_all(with_customer_info = true) {
-      // Reset customer info
       this.customer_name = "";
       if (with_customer_info) {
         this.customer_info = "";
       }
-
-      // Reset Mpesa search and selections
       this.mpesa_search_mobile = "";
       this.mpesa_search_name = "";
       this.mpesa_payments = [];
       this.selected_mpesa_payments = [];
-
-      // Reset invoice and payment selections
       this.outstanding_invoices = [];
       this.unallocated_payments = [];
       this.selected_invoices = [];
       this.selected_payments = [];
       this.selected_mpesa_payments = [];
-
-      // Reset payment methods
       this.set_payment_methods();
-
-      // Reset event details
       this.event_subject = "";
-      this.event_start = null;
-      this.event_end = null;
+      this.event_start = "";
+      this.event_end = "";
     },
 
     submit() {
@@ -809,5 +801,11 @@ input[total_selected_invoices] {
 
 input[total_selected_mpesa_payments] {
   text-align: right;
+}
+
+.payment-form-wrapper {
+  overflow-y: auto;
+  padding-bottom: 100px;
+  /* or more depending on submit button height */
 }
 </style>
