@@ -10,7 +10,7 @@ from erpnext.setup.utils import get_exchange_rate
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
 from posawesome.posawesome.api.m_pesa import submit_mpesa_payment
 from erpnext.accounts.utils import QueryPaymentLedger, get_outstanding_invoices as _get_outstanding_invoices
-
+from frappe.utils import now
 
 def create_payment_entry(
     company,
@@ -436,3 +436,16 @@ def get_available_pos_profiles(company, currency):
         pluck="name",
     )
     return pos_profiles_list
+
+@frappe.whitelist()
+def create_event_for_payment(subject, start, end):
+    doc = frappe.get_doc({
+        "doctype": "Event",
+        "subject": subject,
+        "starts_on": start,
+        "ends_on": end,
+        "event_type": "Private",
+        "owner": frappe.session.user,
+    })
+    doc.insert(ignore_permissions=True)
+    return doc.name
