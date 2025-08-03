@@ -438,12 +438,11 @@ def get_available_pos_profiles(company, currency):
     return pos_profiles_list
 
 @frappe.whitelist()
-def create_event_for_payment(subject, start, end):
+def create_event_for_payment(subject, start):
     doc = frappe.get_doc({
         "doctype": "Event",
         "subject": subject,
         "starts_on": start,
-        "ends_on": end,
         "event_type": "Private",
         "owner": frappe.session.user,
     })

@@ -197,17 +197,17 @@
 
             <v-row>
               <v-col cols="12">
-                <v-textarea label="Subject" auto-grow outlined dense v-model="event_subject"
-                  :rules="[v => !!v || 'Subject is required']" background-color="white" class="mb-0"></v-textarea>
+                <v-text-field label="Subject" outlined dense v-model="event_subject"
+                  :rules="[v => !!v || 'Subject is required']"></v-text-field>
               </v-col>
             </v-row>
 
             <v-row>
-              <v-col cols="6">
+              <v-col cols="12">
                 <v-dialog ref="startDialog" v-model="start_dialog" persistent width="290px">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="event_start" label="Start Date & Time" readonly v-bind="attrs" v-on="on"
-                      outlined dense></v-text-field>
+                    <v-text-field v-model="event_start" label="Date & Time" readonly v-bind="attrs" v-on="on" outlined
+                      dense></v-text-field>
                   </template>
                   <v-card>
                     <v-date-picker v-model="event_start_date" no-title scrollable>
@@ -225,7 +225,7 @@
                 </v-dialog>
               </v-col>
 
-              <v-col cols="6">
+              <!-- <v-col cols="6">
                 <v-dialog ref="endDialog" v-model="end_dialog" persistent width="290px">
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field v-model="event_end" label="End Date & Time" readonly v-bind="attrs" v-on="on" outlined
@@ -245,7 +245,7 @@
                     <v-btn text color="primary" @click="setEndDateTime">OK</v-btn>
                   </v-time-picker>
                 </v-dialog>
-              </v-col>
+              </v-col> -->
             </v-row>
 
           </strong>
@@ -616,6 +616,7 @@ export default {
 
     submit() {
       const customer = this.customer_name;
+      const customer_name = this.customer_info.customer_name;
       const vm = this;
 
       if (!customer) {
@@ -624,18 +625,18 @@ export default {
       }
 
       // ✅ Require event fields
-      if (!this.event_subject || !this.event_start || !this.event_end) {
+      if (!this.event_subject || !this.event_start) {
         frappe.throw(__("Please fill all event details"));
         return;
       }
 
-      // ✅ Validate start < end
-      const start_dt = new Date(this.event_start);
-      const end_dt = new Date(this.event_end);
-      if (start_dt >= end_dt) {
-        frappe.throw(__("End date must be after start date"));
-        return;
-      }
+      // // ✅ Validate start < end
+      // const start_dt = new Date(this.event_start);
+      // const end_dt = new Date(this.event_end);
+      // if (start_dt >= end_dt) {
+      //   frappe.throw(__("End date must be after start date"));
+      //   return;
+      // }
 
       if (
         this.total_selected_payments == 0 &&
@@ -688,9 +689,9 @@ export default {
             frappe.call({
               method: "posawesome.posawesome.api.payment_entry.create_event_for_payment",
               args: {
-                subject: `${vm.customer_name || ""} - ${vm.event_subject}`,
+                subject: `${customer_name || ""} - ${vm.event_subject}`,
                 start: vm.event_start,
-                end: vm.event_end,
+                //end: vm.event_end,
               },
               callback: function (res) {
                 if (!res.exc) {
