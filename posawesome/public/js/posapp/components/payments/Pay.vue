@@ -568,6 +568,14 @@ export default {
         `${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;
     },
 
+    parseLocalDateTime(datetimeStr) {
+      const [datePart, timePart] = datetimeStr.split(" ");
+      const [year, month, day] = datePart.split("-").map(Number);
+      const [hour, minute, second] = timePart.split(":").map(Number);
+      return new Date(year, month - 1, day, hour, minute, second);
+    },
+
+
     get_draft_mpesa_payments_register() {
       if (!this.pos_profile.posa_allow_mpesa_reconcile_payments) return;
       const vm = this;
@@ -647,7 +655,7 @@ export default {
       //   return;
       // }
 
-      const localDate = new Date(this.event_start);
+      const localDate = this.parseLocalDateTime(this.event_start);
       const formattedEventStart = this.formatLocalDateTime(localDate);
 
       if (
