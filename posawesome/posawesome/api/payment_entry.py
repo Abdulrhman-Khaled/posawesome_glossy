@@ -1,6 +1,3 @@
-# Copyright (c) 2021, Youssef Restom and contributors
-# For license information, please see license.txt
-
 import frappe, erpnext, json
 from frappe import _
 from frappe.utils import nowdate, getdate, flt
