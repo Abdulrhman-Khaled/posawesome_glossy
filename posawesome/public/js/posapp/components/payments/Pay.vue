@@ -638,6 +638,9 @@ export default {
       //   return;
       // }
 
+      const localDate = new Date(this.event_start);
+      const formattedEventStart = frappe.datetime.obj_to_str(localDate);
+
       if (
         this.total_selected_payments == 0 &&
         this.total_selected_mpesa_payments == 0 &&
@@ -690,7 +693,7 @@ export default {
               method: "posawesome.posawesome.api.payment_entry.create_event_for_payment",
               args: {
                 subject: `${customer_name || ""} - ${vm.event_subject}`,
-                start: vm.event_start,
+                start: formattedEventStart,
                 //end: vm.event_end,
               },
               callback: function (res) {
