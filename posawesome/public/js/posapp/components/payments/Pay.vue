@@ -561,6 +561,13 @@ export default {
           this.customer_info.mobile_no.substring(9);
       }
     },
+
+    formatLocalDateTime(dateObj) {
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())} ` +
+        `${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;
+    },
+
     get_draft_mpesa_payments_register() {
       if (!this.pos_profile.posa_allow_mpesa_reconcile_payments) return;
       const vm = this;
@@ -582,6 +589,8 @@ export default {
           vm.mpesa_payments_loading = false;
         });
     },
+
+
     set_payment_methods() {
       // get payment methods from pos profile
       if (!this.pos_profile.posa_allow_make_new_payments) return;
@@ -639,7 +648,7 @@ export default {
       // }
 
       const localDate = new Date(this.event_start);
-      const formattedEventStart = frappe.datetime.obj_to_str(localDate);
+      const formattedEventStart = formatLocalDateTime(localDate);
 
       if (
         this.total_selected_payments == 0 &&
