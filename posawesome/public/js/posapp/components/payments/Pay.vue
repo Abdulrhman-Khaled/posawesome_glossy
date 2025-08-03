@@ -648,7 +648,7 @@ export default {
       // }
 
       const localDate = new Date(this.event_start);
-      const formattedEventStart = formatLocalDateTime(localDate);
+      const formattedEventStart = this.formatLocalDateTime(localDate);
 
       if (
         this.total_selected_payments == 0 &&
