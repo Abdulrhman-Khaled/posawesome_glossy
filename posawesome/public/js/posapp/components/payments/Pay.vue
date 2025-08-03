@@ -190,38 +190,60 @@
                   :prefix="currencySymbol(pos_profile.currency)"></v-text-field>
               </v-col>
             </v-row>
+
+            <v-divider class="mt-4 mb-2"></v-divider>
+            <h4 class="primary--text">Event Details</h4>
+
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Subject" v-model="event_subject" outlined dense
-                  background-color="white"></v-text-field>
+                <v-textarea label="Subject" auto-grow outlined dense v-model="event_subject"
+                  :rules="[v => !!v || 'Subject is required']" background-color="white"></v-textarea>
               </v-col>
             </v-row>
+
             <v-row>
               <v-col cols="6">
-                <v-menu ref="startMenu" v-model="start_menu" :close-on-content-click="false"
-                  transition="scale-transition" offset-y min-width="290px">
+                <v-dialog ref="startDialog" v-model="start_dialog" persistent width="290px">
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field v-model="event_start" label="Start Date & Time" readonly v-bind="attrs" v-on="on"
-                      dense outlined background-color="white"></v-text-field>
+                      outlined dense></v-text-field>
                   </template>
-                  <v-date-picker v-model="event_start" type="datetime" scrollable>
+                  <v-card>
+                    <v-date-picker v-model="event_start_date" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="$refs.startDialogTime.open()">Next</v-btn>
+                    </v-date-picker>
+                  </v-card>
+                </v-dialog>
+
+                <v-dialog ref="startDialogTime" v-model="start_time_dialog" persistent width="290px">
+                  <v-time-picker v-model="event_start_time" format="24hr">
                     <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="start_menu = false">OK</v-btn>
-                  </v-date-picker>
-                </v-menu>
+                    <v-btn text color="primary" @click="setStartDateTime">OK</v-btn>
+                  </v-time-picker>
+                </v-dialog>
               </v-col>
+
               <v-col cols="6">
-                <v-menu ref="endMenu" v-model="end_menu" :close-on-content-click="false" transition="scale-transition"
-                  offset-y min-width="290px">
+                <v-dialog ref="endDialog" v-model="end_dialog" persistent width="290px">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field v-model="event_end" label="End Date & Time" readonly v-bind="attrs" v-on="on" dense
-                      outlined background-color="white"></v-text-field>
+                    <v-text-field v-model="event_end" label="End Date & Time" readonly v-bind="attrs" v-on="on" outlined
+                      dense></v-text-field>
                   </template>
-                  <v-date-picker v-model="event_end" type="datetime" scrollable>
+                  <v-card>
+                    <v-date-picker v-model="event_end_date" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="$refs.endDialogTime.open()">Next</v-btn>
+                    </v-date-picker>
+                  </v-card>
+                </v-dialog>
+
+                <v-dialog ref="endDialogTime" v-model="end_time_dialog" persistent width="290px">
+                  <v-time-picker v-model="event_end_time" format="24hr">
                     <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="end_menu = false">OK</v-btn>
-                  </v-date-picker>
-                </v-menu>
+                    <v-btn text color="primary" @click="setEndDateTime">OK</v-btn>
+                  </v-time-picker>
+                </v-dialog>
               </v-col>
             </v-row>
 
@@ -378,10 +400,16 @@ export default {
         },
       ],
       event_subject: "",
+      event_start_date: "",
+      event_start_time: "",
+      event_end_date: "",
+      event_end_time: "",
       event_start: "",
       event_end: "",
-      start_menu: false,
-      end_menu: false,
+      start_dialog: false,
+      start_time_dialog: false,
+      end_dialog: false,
+      end_time_dialog: false,
 
     };
   },
@@ -392,6 +420,21 @@ export default {
   },
 
   methods: {
+    setStartDateTime() {
+      if (this.event_start_date && this.event_start_time) {
+        this.event_start = `${this.event_start_date} ${this.event_start_time}:00`;
+        this.start_time_dialog = false;
+        this.start_dialog = false;
+      }
+    },
+    setEndDateTime() {
+      if (this.event_end_date && this.event_end_time) {
+        this.event_end = `${this.event_end_date} ${this.event_end_time}:00`;
+        this.end_time_dialog = false;
+        this.end_dialog = false;
+      }
+    },
+
     check_opening_entry() {
       return frappe
         .call("posawesome.posawesome.api.posapp.check_opening_shift", {
@@ -551,39 +594,66 @@ export default {
       });
     },
     clear_all(with_customer_info = true) {
+      // Reset customer info
       this.customer_name = "";
       if (with_customer_info) {
         this.customer_info = "";
       }
+
+      // Reset Mpesa search and selections
       this.mpesa_search_mobile = "";
       this.mpesa_search_name = "";
       this.mpesa_payments = [];
       this.selected_mpesa_payments = [];
+
+      // Reset invoice and payment selections
       this.outstanding_invoices = [];
       this.unallocated_payments = [];
       this.selected_invoices = [];
       this.selected_payments = [];
       this.selected_mpesa_payments = [];
+
+      // Reset payment methods
       this.set_payment_methods();
+
+      // Reset event details
       this.event_subject = "";
-      this.event_start = "";
-      this.event_end = "";
+      this.event_start = null;
+      this.event_end = null;
     },
+
     submit() {
       const customer = this.customer_name;
       const vm = this;
+
       if (!customer) {
         frappe.throw(__("Please select a customer"));
         return;
       }
+
+      // ✅ Require event fields
+      if (!this.event_subject || !this.event_start || !this.event_end) {
+        frappe.throw(__("Please fill all event details"));
+        return;
+      }
+
+      // ✅ Validate start < end
+      const start_dt = new Date(this.event_start);
+      const end_dt = new Date(this.event_end);
+      if (start_dt >= end_dt) {
+        frappe.throw(__("End date must be after start date"));
+        return;
+      }
+
       if (
         this.total_selected_payments == 0 &&
         this.total_selected_mpesa_payments == 0 &&
         this.total_payment_methods == 0
       ) {
-        frappe.throw(__("Please make a payment or select an payment"));
+        frappe.throw(__("Please make a payment or select a payment"));
         return;
       }
+
       if (
         this.total_selected_payments > 0 &&
         this.selected_invoices.length == 0
@@ -596,23 +666,22 @@ export default {
         payment.amount = flt(payment.amount);
       });
 
-      const payload = {};
-      payload.customer = customer;
-      payload.company = this.company;
-      payload.currency = this.pos_profile.currency;
-      payload.pos_opening_shift_name = this.pos_opening_shift.name;
-      payload.pos_profile_name = this.pos_profile.name;
-      payload.pos_profile = this.pos_profile;
-      payload.payment_methods = this.payment_methods;
-      payload.selected_invoices = this.selected_invoices;
-      payload.selected_payments = this.selected_payments;
-      payload.total_selected_invoices = flt(this.total_selected_invoices);
-      payload.selected_mpesa_payments = this.selected_mpesa_payments;
-      payload.total_selected_payments = flt(this.total_selected_payments);
-      payload.total_payment_methods = flt(this.total_payment_methods);
-      payload.total_selected_mpesa_payments = flt(
-        this.total_selected_mpesa_payments
-      );
+      const payload = {
+        customer: customer,
+        company: this.company,
+        currency: this.pos_profile.currency,
+        pos_opening_shift_name: this.pos_opening_shift.name,
+        pos_profile_name: this.pos_profile.name,
+        pos_profile: this.pos_profile,
+        payment_methods: this.payment_methods,
+        selected_invoices: this.selected_invoices,
+        selected_payments: this.selected_payments,
+        total_selected_invoices: flt(this.total_selected_invoices),
+        selected_mpesa_payments: this.selected_mpesa_payments,
+        total_selected_payments: flt(this.total_selected_payments),
+        total_payment_methods: flt(this.total_payment_methods),
+        total_selected_mpesa_payments: flt(this.total_selected_mpesa_payments),
+      };
 
       frappe.call({
         method: "posawesome.posawesome.api.payment_entry.process_pos_payment",
@@ -623,21 +692,20 @@ export default {
           if (r.message) {
             frappe.utils.play_sound("submit");
 
-            if (vm.event_subject && vm.event_start && vm.event_end) {
-              frappe.call({
-                method: "posawesome.posawesome.api.payment_entry.create_event_for_payment",
-                args: {
-                  subject: vm.event_subject,
-                  start: vm.event_start,
-                  end: vm.event_end,
-                },
-                callback: function (res) {
-                  if (!res.exc) {
-                    frappe.msgprint(__("Event created: ") + res.message);
-                  }
-                },
-              });
-            }
+            // ✅ Create Event
+            frappe.call({
+              method: "posawesome.posawesome.api.payment_entry.create_event_for_payment",
+              args: {
+                subject: `${vm.customer_name || ""} - ${vm.event_subject}`,
+                start: vm.event_start,
+                end: vm.event_end,
+              },
+              callback: function (res) {
+                if (!res.exc) {
+                  frappe.msgprint(__("Event created: ") + res.message);
+                }
+              },
+            });
 
             vm.clear_all(false);
             vm.customer_name = customer;
@@ -649,6 +717,7 @@ export default {
         },
       });
     },
+
   },
 
   computed: {
