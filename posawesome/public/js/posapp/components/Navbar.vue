@@ -1,44 +1,32 @@
 <template>
   <nav>
     <v-app-bar app height="40" class="elevation-2">
-      <v-app-bar-nav-icon
-        @click.stop="drawer = !drawer"
-        class="grey--text"
-      ></v-app-bar-nav-icon>
-      <v-img
-        src="/assets/posawesome/js/posapp/components/pos/pos.png"
-        alt="POS ITQAN"
-        max-width="32"
-        class="mr-2"
-        color="primary"
-      ></v-img>
-      <v-toolbar-title
-        @click="go_desk"
-        style="cursor: pointer"
-        class="text-uppercase primary--text"
-      >
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="grey--text"></v-app-bar-nav-icon>
+      <v-img src="/assets/posawesome/js/posapp/components/pos/pos.png" alt="POS ITQAN" max-width="32" class="mr-2"
+        color="primary"></v-img>
+      <v-toolbar-title @click="go_desk" style="cursor: pointer" class="text-uppercase primary--text">
         <span class="font-weight-light">pos</span>
         <span>ITQAN</span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
+      <v-btn style="cursor: unset" text color="primary" @click="openAppointment">
+        <span right>Appointment</span>
+      </v-btn>
+
       <v-btn style="cursor: unset" text color="primary">
         <span right>{{ pos_profile.name }}</span>
       </v-btn>
+
       <div class="text-center">
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark text v-bind="attrs" v-on="on"
-              >Menu</v-btn
-            >
+            <v-btn color="primary" dark text v-bind="attrs" v-on="on">Menu</v-btn>
           </template>
           <v-card class="mx-auto" max-width="300" tile>
             <v-list dense>
               <v-list-item-group v-model="menu_item" color="primary">
-                <v-list-item
-                  @click="close_shift_dialog"
-                  v-if="!pos_profile.posa_hide_closing_shift && item == 0"
-                >
+                <v-list-item @click="close_shift_dialog" v-if="!pos_profile.posa_hide_closing_shift && item == 0">
                   <v-list-item-icon>
                     <v-icon>mdi-content-save-move-outline</v-icon>
                   </v-list-item-icon>
@@ -48,13 +36,10 @@
                     }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-                <v-list-item
-                  @click="print_last_invoice"
-                  v-if="
-                    pos_profile.posa_allow_print_last_invoice &&
-                    this.last_invoice
-                  "
-                >
+                <v-list-item @click="print_last_invoice" v-if="
+                  pos_profile.posa_allow_print_last_invoice &&
+                  this.last_invoice
+                ">
                   <v-list-item-icon>
                     <v-icon>mdi-printer</v-icon>
                   </v-list-item-icon>
@@ -87,13 +72,7 @@
         </v-menu>
       </div>
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant.sync="mini"
-      app
-      class="primary margen-top"
-      width="170"
-    >
+    <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" app class="primary margen-top" width="170">
       <v-list dark>
         <v-list-item class="px-2">
           <v-list-item-avatar>
@@ -108,11 +87,7 @@
         </v-list-item>
         <!-- <MyPopup/> -->
         <v-list-item-group v-model="item" color="white">
-          <v-list-item
-            v-for="item in items"
-            :key="item.text"
-            @click="changePage(item.text)"
-          >
+          <v-list-item v-for="item in items" :key="item.text" @click="changePage(item.text)">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -167,6 +142,11 @@ export default {
     };
   },
   methods: {
+    openAppointment() {
+      const eventUrl = `${window.location.origin}/app/event/view/calendar/default`;
+      window.open(eventUrl, '_blank');
+    },
+
     changePage(key) {
       this.$emit('changePage', key);
     },

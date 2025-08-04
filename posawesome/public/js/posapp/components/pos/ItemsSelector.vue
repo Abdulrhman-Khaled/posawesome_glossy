@@ -55,7 +55,9 @@
                     <v-card hover="hover" @click="add_item(item)">
                       <v-img :src="item.image ||
                         '/assets/posawesome/js/posapp/components/pos/placeholder-image.png'
-                        " class="white--text align-end" gradient="to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4)" height="100px">
+                        " class="white--text align-end" gradient="to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4)"
+                        height="100px">
+                        <v-card-text v-text="item.item_name" class="text-caption px-1 pb-0"></v-card-text>
                         <v-card-text v-text="item.item_name" class="text-caption px-1 pb-0"></v-card-text>
                       </v-img>
                       <v-card-text class="text--primary pa-1">
