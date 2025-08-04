@@ -805,6 +805,7 @@ export default {
           posa_notes: item.posa_notes,
           posa_delivery_date: item.posa_delivery_date,
           price_list_rate: item.price_list_rate,
+          custom_sales_person: item.custom_sales_person,
         };
         items_list.push(new_item);
       });
@@ -1126,6 +1127,7 @@ export default {
             serial_no: item.serial_no,
             batch_no: item.batch_no,
             is_stock_item: item.is_stock_item,
+            custom_sales_person: item.custom_sales_person,
           },
         },
         callback: function (r) {
