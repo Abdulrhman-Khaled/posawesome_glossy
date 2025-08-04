@@ -573,6 +573,7 @@ export default {
                     break;
                   }
                   if (
+                    item.item_name_arabic &&
                     element_regex.test(item.item_name_arabic.toLowerCase())
                   ) {
                     found = true;
