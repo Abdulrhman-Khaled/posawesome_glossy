@@ -273,7 +273,7 @@ export default {
         {
           text: __("Arabic"),
           align: "start",
-          sortable: true,
+          sortable: false,
           value: "item_name_arabic",
         },
         {
@@ -283,8 +283,8 @@ export default {
           value: "item_code",
         },
         { text: __("Rate"), value: "rate", align: "start" },
-        { text: __("Available QTY"), value: "actual_qty", align: "start" },
-        { text: __("UOM"), value: "stock_uom", align: "start" },
+        { text: __("Available QTY"), sortable: false, value: "actual_qty", align: "start" },
+        { text: __("UOM"), sortable: false, value: "stock_uom", align: "start" },
       ];
       if (!this.pos_profile.posa_display_item_code) {
         items_headers.splice(1, 1);
@@ -569,6 +569,12 @@ export default {
                     `.*${element.split("").join(".*")}.*`
                   );
                   if (element_regex.test(item.item_name.toLowerCase())) {
+                    found = true;
+                    break;
+                  }
+                  if (
+                    element_regex.test(item.item_name_arabic.toLowerCase())
+                  ) {
                     found = true;
                     break;
                   }
