@@ -60,9 +60,12 @@
                       </v-img>
                       <v-card-text class="text--primary pa-1">
                         <div class="text-caption primary--text">
-
                           {{ item.item_name }}
+                        </div>
+                        <div class="text-caption primary--text">
                           {{ item.item_name_arabic }}
+                        </div>
+                        <div class="text-caption primary--text">
                           {{ currencySymbol(item.currency) || "" }}
                           {{ formtCurrency(item.rate) || 0 }}
                         </div>
@@ -265,7 +268,13 @@ export default {
           text: __("Name"),
           align: "start",
           sortable: true,
-          value: "item_name" + "item_name_arabic",
+          value: "item_name",
+        },
+        {
+          text: __("الأسم"),
+          align: "start",
+          sortable: true,
+          value: "item_name_arabic",
         },
         {
           text: __("Code"),
