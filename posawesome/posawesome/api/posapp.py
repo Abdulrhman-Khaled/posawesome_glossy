@@ -195,6 +195,7 @@ def get_items(pos_profile, price_list=None, item_group="", search_value=""):
             SELECT
                 name AS item_code,
                 item_name,
+                item_name_arabic,
                 description,
                 stock_uom,
                 image,

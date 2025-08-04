@@ -271,7 +271,7 @@ export default {
           value: "item_name",
         },
         {
-          text: __("الأسم"),
+          text: __("Arabic"),
           align: "start",
           sortable: true,
           value: "item_name_arabic",
