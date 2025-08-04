@@ -236,6 +236,12 @@
                     <v-text-field dense outlined color="primary" :label="frappe._('Stock UOM')" background-color="white"
                       hide-details v-model="item.stock_uom" disabled></v-text-field>
                   </v-col>
+                  <v-col cols="4">
+                    <v-select dense outlined color="primary" :label="frappe._('Sales Person')" :items="sales_persons"
+                      item-text="sales_person_name" item-value="name" v-model="item.custom_sales_person"
+                      background-color="white" hide-details clearable></v-select>
+                  </v-col>
+
                   <v-col align="center" cols="4" v-if="item.posa_offer_applied">
                     <v-checkbox dense :label="frappe._('Offer Applied')" v-model="item.posa_offer_applied" readonly
                       hide-details class="shrink mr-2 mt-0"></v-checkbox>
@@ -453,6 +459,8 @@ export default {
         { text: __("Amount"), value: "amount", align: "center" },
         { text: __("is Offer"), value: "posa_is_offer", align: "center" },
       ],
+      sales_persons: [],
+
     };
   },
 
@@ -1043,6 +1051,17 @@ export default {
 
     close_payments() {
       evntBus.$emit("show_payment", "false");
+    },
+
+    fetch_sales_persons() {
+      frappe.call({
+        method: "posawesome.posawesome.api.posapp.get_sales_person_names",     
+        callback: (r) => {
+          if (r.message) {
+            this.sales_persons = r.message;
+          }
+        },
+      });
     },
 
     update_items_details(items) {
@@ -2293,6 +2312,7 @@ export default {
     });
     evntBus.$on("add_item", (item) => {
       this.add_item(item);
+      this.fetch_sales_persons();
     });
     evntBus.$on("update_customer", (customer) => {
       this.customer = customer;
