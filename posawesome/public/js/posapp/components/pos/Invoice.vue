@@ -78,7 +78,7 @@
         </v-col>
       </v-row>
 
-      <div class="my-0 py-0 overflow-y-auto" style="max-height: 60vh">
+      <div class="my-0 py-0 overflow-y-auto" style="max-height: 80vh">
         <template @mouseover="style = 'cursor: pointer'">
           <v-data-table :headers="items_headers" :items="items" :single-expand="singleExpand" :expanded.sync="expanded"
             show-expand item-key="posa_row_id" class="elevation-1" :items-per-page="itemsPerPage" hide-default-footer>
@@ -1056,7 +1056,7 @@ export default {
 
     fetch_sales_persons() {
       frappe.call({
-        method: "posawesome.posawesome.api.posapp.get_sales_person_names",     
+        method: "posawesome.posawesome.api.posapp.get_sales_person_names",
         callback: (r) => {
           if (r.message) {
             this.sales_persons = r.message;
