@@ -11,7 +11,7 @@
 
       <v-spacer></v-spacer>
       <v-btn style="cursor: unset" text color="primary" @click="openAppointment">
-        <span right>Appointment</span>
+        <span right>الحجوزات</span>
       </v-btn>
 
       <v-btn style="cursor: unset" text color="primary">

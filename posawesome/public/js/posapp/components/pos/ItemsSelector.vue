@@ -57,11 +57,12 @@
                         '/assets/posawesome/js/posapp/components/pos/placeholder-image.png'
                         " class="white--text align-end" gradient="to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4)"
                         height="100px">
-                        <v-card-text v-text="item.item_name" class="text-caption px-1 pb-0"></v-card-text>
-                        <v-card-text v-text="item.item_name" class="text-caption px-1 pb-0"></v-card-text>
                       </v-img>
                       <v-card-text class="text--primary pa-1">
                         <div class="text-caption primary--text">
+
+                          {{ item.item_name }}
+                          {{ item.item_name_arabic }}
                           {{ currencySymbol(item.currency) || "" }}
                           {{ formtCurrency(item.rate) || 0 }}
                         </div>
@@ -264,7 +265,7 @@ export default {
           text: __("Name"),
           align: "start",
           sortable: true,
-          value: "item_name",
+          value: "item_name" + "item_name_arabic",
         },
         {
           text: __("Code"),
