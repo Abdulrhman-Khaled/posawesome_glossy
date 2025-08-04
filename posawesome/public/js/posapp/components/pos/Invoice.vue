@@ -18,7 +18,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-card style="max-height: 70vh; height: 70vh" class="cards my-0 py-0 mt-3 grey lighten-5">
+    <v-card style="max-height: 90vh; height: 90vh" class="cards my-0 py-0 mt-3 grey lighten-5">
       <v-row align="center" class="items px-2 py-1">
         <v-col v-if="pos_profile.posa_allow_sales_order" cols="9" class="pb-2 pr-0">
           <Customer></Customer>
@@ -1056,7 +1056,7 @@ export default {
 
     fetch_sales_persons() {
       frappe.call({
-        method: "posawesome.posawesome.api.posapp.get_sales_person_names",
+        method: "posawesome.posawesome.api.posapp.get_sales_person_names",     
         callback: (r) => {
           if (r.message) {
             this.sales_persons = r.message;
