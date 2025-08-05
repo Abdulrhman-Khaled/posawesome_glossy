@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from . import __version__ as app_version
 
-app_name = "posawesome"
+app_name = "posawesome_glossy"
 app_title = "POS Awesome"
 app_publisher = "Youssef Restom"
 app_description = "POS Awesome"
